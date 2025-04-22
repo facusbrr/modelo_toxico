@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+      body {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        background-color: #000;
+        color: #fff;
+      }
+
+      input[type="text"] {
+        padding: 10px;
+        font-size: 16px;
+      }
+
+      button {
+        padding: 10px 20px;
+        margin-top: 10px;
+        font-size: 16px;
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        cursor: pointer;
+      }
+
+      #results {
+        margin-top: 20px;
+      }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/toxicity"></script>
+    <title>IA Tóxica</title>
+  </head>
+  <body>
+    <input
+      type="text"
+      id="inputText"
+      placeholder="Ingrese el texto a analizar"
+    />
+    <button onclick="analyzeText()">Analizar</button>
+
+    <div id="results"></div>
+
+    <script>
+      function analyzeText() {
+        const inputText = document.getElementById("inputText").value;
+        toxicity.load(0.5).then((model) => {
+          model.classify([inputText]).then((predictions) => {
+            const resultsDiv = document.getElementById("results");
+            resultsDiv.innerHTML = "";
+            predictions.forEach((prediction) => {
+              const label = prediction.label;
+              const probability = (
+                prediction.results[0].probabilities[1] * 100
+              ).toFixed(2);
+              const resultText = `Etiqueta de toxicidad: ${label}<br>Probabilidad de toxicidad: ${probability}%<br><br>`;
+              resultsDiv.innerHTML += resultText;
+            });
+          });
+        });
+      }
+    </script>
+  </body>
+</html>
